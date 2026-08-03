@@ -7,7 +7,7 @@ interface EcoMotionBackdropProps {
   overlayOpacity?: number;
 }
 
-export function EcoMotionBackdrop({ className, overlayOpacity = 0.85 }: EcoMotionBackdropProps) {
+export function EcoMotionBackdrop({ className, overlayOpacity = 0.92 }: EcoMotionBackdropProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
@@ -21,15 +21,15 @@ export function EcoMotionBackdrop({ className, overlayOpacity = 0.85 }: EcoMotio
     let height = (canvas.height = canvas.parentElement?.offsetHeight || window.innerHeight);
 
     // Glowing firefly particles
-    const particles = Array.from({ length: 45 }, () => ({
+    const particles = Array.from({ length: 35 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2.5 + 1,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
+      radius: Math.random() * 2 + 1,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
       alpha: Math.random(),
-      maxAlpha: Math.random() * 0.7 + 0.3,
-      speedAlpha: Math.random() * 0.015 + 0.005,
+      maxAlpha: Math.random() * 0.6 + 0.2,
+      speedAlpha: Math.random() * 0.01 + 0.003,
     }));
 
     const handleResize = () => {
@@ -62,7 +62,7 @@ export function EcoMotionBackdrop({ className, overlayOpacity = 0.85 }: EcoMotio
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(52, 211, 153, ${p.alpha})`;
         ctx.shadowColor = "#34d399";
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 10;
         ctx.fill();
         ctx.restore();
       });
@@ -85,21 +85,21 @@ export function EcoMotionBackdrop({ className, overlayOpacity = 0.85 }: EcoMotio
         className
       )}
     >
-      {/* Background Image Artwork */}
+      {/* Background Image Artwork - subtle deep contrast */}
       <img
         src={ecoBg}
         alt="Ambient Environmental Background"
-        className="absolute inset-0 h-full w-full object-cover object-center animate-breathe opacity-35 scale-105"
+        className="absolute inset-0 h-full w-full object-cover object-center animate-breathe opacity-20 scale-105"
       />
 
       {/* Fireflies particle canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* Dark gradient radial vignette for text contrast */}
+      {/* Rich dark radial vignette overlay for crisp, high-contrast text */}
       <div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(circle 70% at 50% 40%, rgba(10, 20, 15, ${overlayOpacity - 0.2}), rgba(10, 20, 15, ${overlayOpacity}))`,
+          background: `radial-gradient(circle 80% at 50% 40%, rgba(6, 12, 10, ${overlayOpacity - 0.08}), rgba(6, 12, 10, ${overlayOpacity + 0.05}))`,
         }}
       />
     </div>

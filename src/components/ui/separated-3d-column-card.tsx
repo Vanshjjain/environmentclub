@@ -88,7 +88,7 @@ export function Separated3DColumnCard({
         }}
         className={cn(
           "group relative flex flex-col justify-between h-full rounded-2xl p-6 sm:p-8 cursor-pointer select-none transition-all duration-300",
-          "bg-card/85 backdrop-blur-xl border border-forest/20 shadow-2xl",
+          "bg-card/95 backdrop-blur-2xl border border-forest/30 shadow-2xl",
           "hover:border-accent/60 hover:shadow-accent/25 hover:shadow-2xl",
           className
         )}

@@ -45,44 +45,44 @@
 :root {
   --radius: 1rem;
 
-  /* Dark premium background */
-  --background: oklch(0.1 0.01 150);
-  --foreground: oklch(0.97 0.01 150);
+  /* Deep obsidian dark background for maximum contrast */
+  --background: oklch(0.06 0.015 150);
+  --foreground: oklch(0.99 0.005 150);
 
-  /* Glassmorphism card surface */
-  --card: oklch(0.14 0.012 150);
-  --card-foreground: oklch(0.97 0.01 150);
+  /* Glassmorphism card surface with dark tint */
+  --card: oklch(0.11 0.018 150);
+  --card-foreground: oklch(0.99 0.005 150);
 
-  --popover: oklch(0.14 0.012 150);
-  --popover-foreground: oklch(0.97 0.01 150);
+  --popover: oklch(0.11 0.018 150);
+  --popover-foreground: oklch(0.99 0.005 150);
 
   /* Nature green primary */
   --primary: oklch(0.82 0.2 145);
-  --primary-foreground: oklch(0.1 0.01 150);
+  --primary-foreground: oklch(0.06 0.015 150);
 
-  --secondary: oklch(0.18 0.015 150);
-  --secondary-foreground: oklch(0.9 0.05 145);
+  --secondary: oklch(0.14 0.018 150);
+  --secondary-foreground: oklch(0.92 0.05 145);
 
-  --muted: oklch(0.16 0.01 150);
-  --muted-foreground: oklch(0.6 0.02 150);
+  --muted: oklch(0.12 0.015 150);
+  --muted-foreground: oklch(0.72 0.02 150);
 
   /* Vibrant emerald accent */
   --accent: oklch(0.78 0.22 145);
-  --accent-foreground: oklch(0.08 0.01 150);
+  --accent-foreground: oklch(0.06 0.015 150);
 
   --destructive: oklch(0.45 0.18 25);
   --destructive-foreground: oklch(0.95 0.01 120);
 
-  --border: oklch(0.22 0.015 150);
-  --input: oklch(0.2 0.015 150);
+  --border: oklch(0.2 0.02 150);
+  --input: oklch(0.16 0.02 150);
   --ring: oklch(0.82 0.2 145);
 
   /* Eco colour tokens */
   --forest: oklch(0.82 0.2 145);
-  --leaf: oklch(0.7 0.18 145);
-  --moss: oklch(0.55 0.15 145);
-  --paper: oklch(0.1 0.01 150);
-  --ink: oklch(0.97 0.01 150);
+  --leaf: oklch(0.75 0.18 145);
+  --moss: oklch(0.6 0.15 145);
+  --paper: oklch(0.06 0.015 150);
+  --ink: oklch(0.99 0.005 150);
 }
 
 /* ─── LIGHT MODE ─── */
