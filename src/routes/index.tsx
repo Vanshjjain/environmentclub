@@ -7,6 +7,7 @@ import { heroStats, campaigns, events, testimonials, partners, initiatives } fro
 import { TiltCard } from "@/components/ui/tilt-card";
 import { Interactive3DGrid } from "@/components/ui/interactive-3d-grid";
 import { MatrixBackground } from "@/components/ui/matrix-background";
+import { EcoMotionBackdrop } from "@/components/ui/eco-motion-backdrop";
 import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
 import { supabase } from "@/lib/supabase";
 
@@ -110,10 +111,10 @@ function HomePage() {
     <div className="overflow-hidden bg-background">
       <FloatingLeaves />
 
-      {/* HERO SECTION WITH ECO-MATRIX BACKGROUND */}
-      <section ref={heroRef} className="relative px-6 pb-24 pt-32 md:pt-40 min-h-[95vh] flex items-center">
-        {/* Dynamic Matrix Rain Canvas */}
-        <MatrixBackground opacity={0.16} speed={1.2} />
+      {/* HERO SECTION WITH ANIMATED ECO BACKDROP & MATRIX */}
+      <section ref={heroRef} className="relative px-6 pb-24 pt-32 md:pt-40 min-h-[95vh] flex items-center overflow-hidden">
+        <EcoMotionBackdrop overlayOpacity={0.75} />
+        <MatrixBackground opacity={0.14} speed={1.2} />
         <GradientMesh />
         <Interactive3DGrid />
 
