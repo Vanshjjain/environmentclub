@@ -8,18 +8,19 @@
     "types": ["vite/client"],
 
     /* Bundler mode */
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "noEmit": true,
 
-    /* Linting */
+    /* Linting & Paths */
     "skipLibCheck": true,
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
