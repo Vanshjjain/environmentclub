@@ -1,20 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Sparkles, Calendar, MapPin, Leaf, TreePine, Droplets, Wind, ShieldCheck, HeartHandshake, Award } from "lucide-react";
+import { ArrowRight, Sparkles, Calendar, MapPin, Leaf, TreePine, Droplets, Wind, ShieldCheck, HeartHandshake, Award, CalendarPlus, Bell } from "lucide-react";
 import heroImg from "@/assets/hero-planting.jpg";
-import { heroStats, campaigns, events, testimonials, partners, initiatives } from "@/data/mock";
+import { heroStats, campaigns, events, testimonials, partnerLogos, initiatives, leadership } from "@/data/mock";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { Interactive3DGrid } from "@/components/ui/interactive-3d-grid";
 import { MatrixBackground } from "@/components/ui/matrix-background";
 import { EcoMotionBackdrop } from "@/components/ui/eco-motion-backdrop";
 import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
+import { VolunteerModal } from "@/components/volunteer-modal";
+import { CampaignSupportModal } from "@/components/campaign-support-modal";
+import { SuggestEventModal } from "@/components/suggest-event-modal";
+import { ImpactMap } from "@/components/impact-map";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+/* ─── Animated Counter Component ─── */
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const [n, setN] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -82,6 +87,10 @@ function GradientMesh() {
 
 function HomePage() {
   const [dbEvents, setDbEvents] = useState<any[]>([]);
+  const [isVolunteerOpen, setIsVolunteerOpen] = useState(false);
+  const [isCampaignSupportOpen, setIsCampaignSupportOpen] = useState(false);
+  const [selectedCampaignTitle, setSelectedCampaignTitle] = useState("");
+  const [isSuggestEventOpen, setIsSuggestEventOpen] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -107,25 +116,21 @@ function HomePage() {
   });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
 
+  const handleSupportCampaign = (title: string) => {
+    setSelectedCampaignTitle(title);
+    setIsCampaignSupportOpen(true);
+  };
+
   return (
     <div className="overflow-hidden bg-background">
       <FloatingLeaves />
 
-      {/* HERO SECTION WITH ANIMATED ECO BACKDROP & MATRIX */}
+      {/* HERO SECTION */}
       <section ref={heroRef} className="relative px-6 pb-24 pt-32 md:pt-40 min-h-[95vh] flex items-center overflow-hidden">
-        <EcoMotionBackdrop overlayOpacity={0.75} />
-        <MatrixBackground opacity={0.14} speed={1.2} />
+        <EcoMotionBackdrop overlayOpacity={0.88} />
+        <MatrixBackground opacity={0.12} speed={1.2} />
         <GradientMesh />
         <Interactive3DGrid />
-
-        {/* Grain texture overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.5\'/%3E%3C/svg%3E")',
-          }}
-        />
 
         <div className="mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-2 relative z-10">
           <motion.div
@@ -169,21 +174,19 @@ function HomePage() {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="mt-12 flex flex-wrap items-center gap-6"
             >
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSeEHUaqvl-nNr_75heT3-fC_sYlcXQIPtDB21ZTq3gUfs5icQ/viewform?fbclid=PAZXh0bgNhZW0DMTAwAHNydGMGYXBwX2lkDzU2NzA2NzM0MzM1MjQyNwABp_yiAGyAByIT2tJhwpOLqkOb-OVdS6SqcWoVCJzSS1630Wlm_UdEJM2lLG3Q_aem_yWTZyf3lnuINVO5cO3zOHg&pli=1"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setIsVolunteerOpen(true)}
                 className="group relative inline-flex items-center gap-3 rounded-full bg-forest px-9 py-4 text-base font-bold text-primary-foreground shadow-2xl shadow-forest/40 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-accent/50 cursor-pointer overflow-hidden border border-accent/30"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-accent to-forest opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <span className="relative z-10 flex items-center gap-2">
                   Join the Movement <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
                 </span>
-              </a>
+              </button>
 
               <Link
                 to="/campaigns"
-                className="group inline-flex items-center gap-2 rounded-full border border-forest/30 bg-card/60 px-7 py-4 text-base font-bold text-foreground transition-all duration-300 hover:border-accent hover:bg-card hover:text-accent hover:shadow-lg"
+                className="group inline-flex items-center gap-2 rounded-full border border-forest/40 bg-card/80 px-7 py-4 text-base font-bold text-foreground transition-all duration-300 hover:border-accent hover:bg-card hover:text-accent hover:shadow-lg"
               >
                 Explore Campaigns
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -199,7 +202,6 @@ function HomePage() {
             style={{ y: heroY }}
           >
             <TiltCard className="relative overflow-visible preserve-3d" maxRotation={10} glareOpacity={0.12}>
-              {/* Animated glow ring around image */}
               <div
                 className="absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-forest/30 via-accent/25 to-leaf/30 blur-3xl opacity-60 animate-breathe"
                 style={{ transform: "translateZ(-40px)" }}
@@ -211,10 +213,8 @@ function HomePage() {
                 height={1400}
                 alt="Students planting a sapling together at golden hour"
                 className="relative aspect-[4/5] w-full rounded-[2.5rem] object-cover shadow-2xl border border-forest/30 transition-transform duration-700 hover:scale-[1.01]"
-                style={{ transform: "translateZ(0px)" }}
               />
 
-              {/* Floating 3D Stat Card - Bottom Left */}
               <motion.div
                 initial={{ opacity: 0, x: -30, y: 20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -233,7 +233,6 @@ function HomePage() {
                 </div>
               </motion.div>
 
-              {/* Floating 3D Stat Card - Top Right */}
               <motion.div
                 initial={{ opacity: 0, x: 30, y: -20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -256,7 +255,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* SEPARATED 3D STATS COLUMNS SECTION */}
+      {/* SEPARATED 3D STATS COLUMNS SECTION WITH ANIMATED COUNTERS */}
       <section className="relative bg-card/60 border-y border-forest/20 px-6 py-20 overflow-hidden">
         <MatrixBackground opacity={0.08} speed={0.8} />
 
@@ -268,7 +267,7 @@ function HomePage() {
                 index={i}
                 maxRotation={14}
                 glowColor="rgba(34, 197, 94, 0.35)"
-                className="text-center bg-card/90 border-forest/30 hover:border-accent"
+                className="text-center bg-card/95 border-forest/30 hover:border-accent"
               >
                 <div className="font-display text-4xl sm:text-5xl font-extrabold text-accent matrix-glow">
                   <AnimatedCounter value={s.value} suffix={s.suffix} />
@@ -282,7 +281,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FEATURED CAMPAIGNS - SEPARATED 3D COLUMNS */}
+      {/* FEATURED CAMPAIGNS */}
       <section className="px-6 py-28 relative">
         <MatrixBackground opacity={0.06} speed={0.9} />
         <GradientMesh />
@@ -296,7 +295,7 @@ function HomePage() {
               transition={{ duration: 0.7 }}
               className="max-w-2xl"
             >
-              <span className="text-xs font-bold uppercase tracking-widest text-accent">What we&apos;re building</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-accent">What We&apos;re Building</span>
               <h2 className="mt-3 font-display text-4xl font-extrabold text-foreground md:text-5xl">
                 Impact Campaigns
               </h2>
@@ -309,7 +308,7 @@ function HomePage() {
               to="/campaigns"
               className="group inline-flex items-center gap-2 border-b-2 border-accent pb-1 text-sm font-bold text-accent hover:text-leaf transition-all"
             >
-              View all campaigns <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              View All Campaigns <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
@@ -324,12 +323,12 @@ function HomePage() {
                 footer={
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-muted-foreground uppercase">{c.goal}</span>
-                    <Link
-                      to="/campaigns"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:underline"
+                    <button
+                      onClick={() => handleSupportCampaign(c.title)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:underline cursor-pointer"
                     >
                       Support Campaign <ArrowRight className="size-3.5" />
-                    </Link>
+                    </button>
                   </div>
                 }
               >
@@ -374,121 +373,100 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FOUNDER SECTION WITH 3D ELEVATION */}
-      <section className="px-6 py-24 relative overflow-hidden bg-card/40">
-        <MatrixBackground opacity={0.05} speed={0.7} />
-
-        <div className="mx-auto max-w-5xl relative z-10">
-          <TiltCard
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9 }}
-            maxRotation={6}
-            className="grid gap-12 md:grid-cols-2 items-center rounded-3xl bg-card border border-forest/30 p-8 md:p-12 shadow-2xl hover:border-accent/50 transition-all duration-700"
-          >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl md:order-last group">
-              <img
-                src="/founder.jpg.jpeg"
-                alt="Founder of Environment Club"
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-forest/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </div>
-
-            <div>
-              <span className="inline-block rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 text-xs font-bold tracking-widest text-accent uppercase">
-                Founder of Club
-              </span>
-              <h2 className="mt-4 font-display text-4xl font-extrabold text-foreground">
-                Sawan Kanojia
-              </h2>
-              <blockquote className="mt-6 border-l-4 border-accent pl-6 italic text-muted-foreground text-lg relative">
-                <span className="absolute -top-4 -left-2 text-6xl text-accent/20 font-serif leading-none">&ldquo;</span>
-                "We do not inherit the earth from our ancestors; we borrow it from our children. Our daily choices today are the seeds of the forests of tomorrow. Every single act of conservation matters."
-              </blockquote>
-              <p className="mt-6 text-muted-foreground leading-relaxed text-base">
-                Started with a vision to bring youth together for climate action, our founder believes that true environmental change begins at the grassroots level. By nurturing a profound respect for nature and fostering a community of passionate volunteers, the club has grown into a campus-wide movement.
-              </p>
-            </div>
-          </TiltCard>
+      {/* INTERACTIVE PLANTING IMPACT MAP SECTION */}
+      <section className="px-6 py-24 relative bg-card/40 border-y border-border">
+        <MatrixBackground opacity={0.06} speed={0.8} />
+        <div className="mx-auto max-w-7xl relative z-10">
+          <ImpactMap />
         </div>
       </section>
 
-      {/* PILLARS OF ACTION - SEPARATED 3D COLUMNS */}
-      <section className="px-6 py-24 relative">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-14 flex items-end justify-between">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-xs font-bold uppercase tracking-widest text-accent">What we do</span>
-              <h2 className="mt-2 font-display text-4xl font-extrabold text-foreground md:text-5xl">
-                Our Pillars of Action
-              </h2>
-            </motion.div>
-            <Link
-              to="/campaigns"
-              className="hidden md:inline-flex items-center gap-2 border-b-2 border-accent pb-1 text-sm font-bold text-accent hover:text-leaf transition-all"
-            >
-              Explore initiatives <ArrowRight className="size-4" />
-            </Link>
+      {/* PARTNERS & INSTITUTIONAL ALLIANCES GRID */}
+      <section className="px-6 py-24 relative overflow-hidden bg-card/60">
+        <div className="mx-auto max-w-7xl relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-accent">Strategic Alliances</span>
+            <h2 className="mt-3 font-display text-4xl font-extrabold text-foreground">
+              Official Partners & Government Bodies
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              We collaborate with municipal departments, international NGOs, and technical institutions to scale ecological change.
+            </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {initiatives.map((item, i) => (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {partnerLogos.map((p, i) => (
               <Separated3DColumnCard
-                key={item.id}
+                key={p.name}
                 index={i}
-                maxRotation={12}
-                icon={<span className="text-2xl">{item.emoji}</span>}
-                title={item.headline}
-                subtitle={item.label}
+                maxRotation={6}
+                badge={p.category}
+                icon={<span className="text-2xl">{p.logo}</span>}
+                title={p.name}
+                glowColor="rgba(34, 197, 94, 0.3)"
               >
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  {item.description.slice(0, 110)}…
+                <p className="mt-2 text-xs text-muted-foreground font-medium leading-relaxed">
+                  {p.desc}
                 </p>
-
-                <div className="mt-6 flex gap-4 flex-wrap">
-                  {item.stats.map((s) => (
-                    <div key={s.l} className="rounded-lg bg-forest/10 p-2 border border-forest/20">
-                      <div className="font-display text-base font-bold text-accent">{s.v}</div>
-                      <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{s.l}</div>
-                    </div>
-                  ))}
-                </div>
               </Separated3DColumnCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* UPCOMING EVENTS PREVIEW */}
+      {/* UPCOMING EVENTS & SUGGEST EVENT MODAL TRIGGER */}
       <section className="relative bg-card/50 border-t border-border px-6 py-28 overflow-hidden">
         <MatrixBackground opacity={0.06} speed={0.9} />
 
         <div className="mx-auto max-w-7xl relative z-10">
           <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-accent">Join our events</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-accent">Join Our Events</span>
               <h2 className="mt-2 font-display text-4xl font-extrabold text-foreground md:text-5xl">
                 Upcoming Events & Drives
               </h2>
             </div>
-            <Link
-              to="/events"
-              className="group inline-flex items-center gap-2 border-b-2 border-accent pb-1 text-sm font-bold text-accent hover:text-leaf transition-all"
-            >
-              See full calendar <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setIsSuggestEventOpen(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-5 py-2.5 text-xs font-bold text-accent hover:bg-accent hover:text-accent-foreground transition-all shadow-md cursor-pointer"
+              >
+                <CalendarPlus className="size-4" /> Suggest An Event
+              </button>
+
+              <Link
+                to="/events"
+                className="group inline-flex items-center gap-2 border-b-2 border-accent pb-1 text-sm font-bold text-accent hover:text-leaf transition-all"
+              >
+                See Full Calendar <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {dbEvents.length === 0 ? (
-              <div className="col-span-3 text-center py-12 border border-dashed border-border rounded-2xl bg-card">
-                <p className="text-sm text-muted-foreground">No upcoming events scheduled at the moment. Check back soon!</p>
+              <div className="col-span-3 text-center py-16 border border-dashed border-forest/30 rounded-3xl bg-card/90 p-8 space-y-4">
+                <div className="mx-auto grid size-14 place-items-center rounded-full bg-forest/20 text-accent border border-forest/40">
+                  <Calendar className="size-6" />
+                </div>
+                <h3 className="font-display text-xl font-bold text-foreground">New Drives Being Scheduled</h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  Our next major plantation drive and street play schedule is being finalized for this month.
+                </p>
+                <div className="pt-2 flex flex-wrap justify-center gap-4">
+                  <button
+                    onClick={() => setIsSuggestEventOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-2.5 text-xs font-bold text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all shadow-lg"
+                  >
+                    <CalendarPlus className="size-4" /> Suggest A Cleanup Location
+                  </button>
+                  <button
+                    onClick={() => setIsSuggestEventOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-full border border-forest/40 bg-card px-6 py-2.5 text-xs font-bold text-accent hover:bg-forest/20 transition-all"
+                  >
+                    <Bell className="size-4" /> Get Email Alerts
+                  </button>
+                </div>
               </div>
             ) : (
               dbEvents
@@ -503,7 +481,7 @@ function HomePage() {
                     title={e.title}
                     footer={
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground font-semibold flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                           <MapPin className="size-3.5 text-accent" /> {e.location}
                         </span>
                         <Link
@@ -515,12 +493,12 @@ function HomePage() {
                       </div>
                     }
                   >
-                    <div className="flex items-center gap-3 my-3">
-                      <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl bg-forest/20 border border-forest/40 text-accent">
+                    <div className="flex items-center gap-4 my-4">
+                      <div className="flex size-16 shrink-0 flex-col items-center justify-center rounded-xl bg-forest/20 border border-forest/40 text-accent">
                         <span className="text-[10px] font-bold uppercase">{e.date.split(" ")[0]}</span>
-                        <span className="font-display text-lg font-bold leading-none">{e.date.split(" ")[1]}</span>
+                        <span className="font-display text-2xl font-bold leading-none">{e.date.split(" ")[1]}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground space-y-1">
                         <div className="flex items-center gap-1 font-semibold text-foreground">
                           <Calendar className="size-3.5 text-accent" /> {e.time}
                         </div>
@@ -533,50 +511,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS - SEPARATED 3D COLUMNS */}
-      <section className="px-6 py-28 relative overflow-hidden">
-        <div className="mx-auto max-w-7xl relative z-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-14 font-display text-4xl font-extrabold text-foreground md:text-5xl text-center"
-          >
-            Voices From The Community
-          </motion.h2>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {testimonials.map((t, i) => (
-              <Separated3DColumnCard
-                key={t.name}
-                index={i}
-                maxRotation={10}
-                glowColor="rgba(34, 197, 94, 0.35)"
-                footer={
-                  <div className="flex items-center gap-3">
-                    <div className="grid size-10 shrink-0 place-items-center rounded-full bg-accent/20 border border-accent/40 font-display text-sm font-bold text-accent">
-                      {t.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-foreground">{t.name}</div>
-                      <div className="text-xs text-muted-foreground">{t.role}</div>
-                    </div>
-                  </div>
-                }
-              >
-                <div className="text-yellow-400 flex gap-1 mb-3">
-                  {"★".repeat(5)}
-                </div>
-                <p className="font-display text-base leading-relaxed text-foreground/90 italic">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-              </Separated3DColumnCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA SECTION WITH MATRIX AND 3D CARD */}
+      {/* CTA SECTION WITH MODAL TRIGGER */}
       <section className="px-6 py-28 relative overflow-hidden">
         <MatrixBackground opacity={0.12} speed={1} />
 
@@ -590,7 +525,7 @@ function HomePage() {
             className="rounded-[2.5rem] bg-gradient-to-br from-card via-card/95 to-forest/30 border border-accent/40 p-12 md:p-16 text-center text-foreground shadow-2xl relative overflow-hidden"
           >
             <span className="text-xs font-bold uppercase tracking-widest text-accent relative z-10">
-              Be the change
+              Be The Change
             </span>
 
             <h2 className="mt-4 font-display text-4xl font-extrabold text-balance md:text-5xl relative z-10">
@@ -602,16 +537,14 @@ function HomePage() {
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-5 relative z-10">
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSeEHUaqvl-nNr_75heT3-fC_sYlcXQIPtDB21ZTq3gUfs5icQ/viewform?fbclid=PAZXh0bgNhZW0DMTAwAHNydGMGYXBwX2lkDzU2NzA2NzM0MzM1MjQyNwABp_yiAGyAByIT2tJhwpOLqkOb-OVdS6SqcWoVCJzSS1630Wlm_UdEJM2lLG3Q_aem_yWTZyf3lnuINVO5cO3zOHg&pli=1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-2.5 rounded-full bg-forest px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:shadow-accent/40 overflow-hidden border border-accent/40"
+              <button
+                onClick={() => setIsVolunteerOpen(true)}
+                className="group relative inline-flex items-center gap-2.5 rounded-full bg-forest px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:shadow-accent/40 overflow-hidden border border-accent/40 cursor-pointer"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Join the Club <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
                 </span>
-              </a>
+              </button>
 
               <Link
                 to="/contact"
@@ -623,6 +556,15 @@ function HomePage() {
           </TiltCard>
         </div>
       </section>
+
+      {/* Render Modals */}
+      <VolunteerModal isOpen={isVolunteerOpen} onClose={() => setIsVolunteerOpen(false)} />
+      <CampaignSupportModal
+        isOpen={isCampaignSupportOpen}
+        onClose={() => setIsCampaignSupportOpen(false)}
+        campaignTitle={selectedCampaignTitle}
+      />
+      <SuggestEventModal isOpen={isSuggestEventOpen} onClose={() => setIsSuggestEventOpen(false)} />
     </div>
   );
 }

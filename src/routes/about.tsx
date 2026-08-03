@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Target, Eye, Compass, Sprout, Sparkles } from "lucide-react";
+import { Target, Eye, Compass, Sprout, Sparkles, Linkedin, Twitter, Instagram, Mail, ExternalLink } from "lucide-react";
 import communityImg from "@/assets/community.jpg";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { MatrixBackground } from "@/components/ui/matrix-background";
 import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
+import { ResourceHub } from "@/components/resource-hub";
+import { leadership } from "@/data/mock";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -15,7 +17,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Our mission, vision, coordinators and the small history of a student community that grew into a movement.",
+          "Our mission, vision, leadership team, coordinators and the history of a student community that grew into a movement.",
       },
       { property: "og:title", content: "About — Environment Club" },
       { property: "og:url", content: "/about" },
@@ -116,24 +118,98 @@ function AboutPage() {
         </TiltCard>
       </div>
 
-      {/* 10 Years Impact */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7 }}
-        className="mx-auto mt-24 max-w-5xl rounded-3xl bg-card/80 backdrop-blur-xl p-8 md:p-12 text-center relative overflow-hidden border border-forest/40 shadow-2xl z-10"
-      >
-        <h2 className="mb-6 font-display text-3xl font-extrabold text-foreground relative z-10">
-          Celebrating <span className="text-accent matrix-glow">10 Years of Impact</span>
-        </h2>
-        <p className="text-lg leading-relaxed text-muted-foreground relative z-10 font-medium">
-          This year marks a decade of steadfast commitment to environmental conservation. Over the past ten years, we have worked tirelessly to protect, restore, and advocate for our local ecosystems. Our core initiatives—ranging from community-wide cleanups and targeted environmental campaigns to rigorous educational drives—have consistently driven tangible change.
-        </p>
-      </motion.div>
+      {/* LEADERSHIP & CORE TEAM SECTION WITH SOCIAL LINKS */}
+      <div className="mx-auto mt-32 max-w-6xl z-10 relative">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-bold uppercase tracking-widest text-accent">Club Leadership</span>
+          <h2 className="mt-3 font-display text-4xl font-extrabold text-foreground">
+            Meet Our Founders & Directors
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Student leaders and mentors driving ecological action, campus chapters, and policy partnerships.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {leadership.map((member, i) => (
+            <Separated3DColumnCard
+              key={member.name}
+              index={i}
+              maxRotation={10}
+              badge={member.role}
+              title={member.name}
+              glowColor="rgba(34, 197, 94, 0.4)"
+              footer={
+                <div className="flex items-center gap-3 pt-2">
+                  {member.socials.linkedin && (
+                    <a
+                      href={member.socials.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-xl bg-forest/15 text-accent hover:bg-accent hover:text-accent-foreground transition-all"
+                      aria-label={`${member.name} LinkedIn`}
+                    >
+                      <Linkedin className="size-4" />
+                    </a>
+                  )}
+                  {member.socials.twitter && (
+                    <a
+                      href={member.socials.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-xl bg-forest/15 text-accent hover:bg-accent hover:text-accent-foreground transition-all"
+                      aria-label={`${member.name} Twitter`}
+                    >
+                      <Twitter className="size-4" />
+                    </a>
+                  )}
+                  {member.socials.instagram && (
+                    <a
+                      href={member.socials.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-xl bg-forest/15 text-accent hover:bg-accent hover:text-accent-foreground transition-all"
+                      aria-label={`${member.name} Instagram`}
+                    >
+                      <Instagram className="size-4" />
+                    </a>
+                  )}
+                  {member.socials.email && (
+                    <a
+                      href={`mailto:${member.socials.email}`}
+                      className="p-2 rounded-xl bg-forest/15 text-accent hover:bg-accent hover:text-accent-foreground transition-all ml-auto"
+                      aria-label={`Email ${member.name}`}
+                    >
+                      <Mail className="size-4" />
+                    </a>
+                  )}
+                </div>
+              }
+            >
+              <div className="my-3 space-y-3">
+                <div className="relative aspect-square overflow-hidden rounded-2xl border border-forest/30">
+                  <img
+                    src={member.avatar}
+                    alt={member.name}
+                    className="size-full object-cover"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  {member.bio}
+                </p>
+              </div>
+            </Separated3DColumnCard>
+          ))}
+        </div>
+      </div>
+
+      {/* DOWNLOADABLE RESOURCE HUB */}
+      <div className="mx-auto mt-32 max-w-6xl z-10 relative">
+        <ResourceHub />
+      </div>
 
       {/* Pillars - SEPARATED 3D COLUMNS */}
-      <div className="mx-auto mt-24 max-w-6xl z-10 relative">
+      <div className="mx-auto mt-32 max-w-6xl z-10 relative">
         <h2 className="mb-10 text-center font-display text-4xl font-extrabold text-foreground">
           Core Pillars & Values
         </h2>
@@ -181,48 +257,6 @@ function AboutPage() {
             </motion.li>
           ))}
         </ol>
-      </div>
-
-      {/* Core Team - SEPARATED 3D COLUMNS */}
-      <div className="mx-auto mt-32 max-w-6xl z-10 relative">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12 font-display text-4xl font-extrabold text-foreground text-center"
-        >
-          Faculty & Core Team
-        </motion.h2>
-        
-        {teamList.length === 0 ? (
-          <div className="text-center py-12 border border-dashed border-border rounded-2xl bg-card">
-            <p className="text-sm text-muted-foreground">No team members registered yet.</p>
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {teamList.map((m, i) => (
-              <Separated3DColumnCard
-                key={m.id || m.name}
-                index={i}
-                maxRotation={10}
-                title={m.name}
-                subtitle={m.role}
-                glowColor="rgba(16, 185, 129, 0.4)"
-              >
-                <div className="flex items-center gap-4 my-2">
-                  <div className="grid size-14 shrink-0 place-items-center rounded-full bg-forest/20 border border-forest/40 font-display text-lg font-bold text-accent shadow-md">
-                    {m.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("")}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    <span className="inline-block rounded-full bg-accent/15 px-3 py-1 text-[10px] font-bold text-accent uppercase">
-                      {m.role || "Team Member"}
-                    </span>
-                  </div>
-                </div>
-              </Separated3DColumnCard>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

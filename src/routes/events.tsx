@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, Sparkles, Loader2, CheckCircle2 } from "lucide-react";
+import { Calendar, MapPin, Clock, Sparkles, Loader2, CheckCircle2, CalendarPlus, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { MatrixBackground } from "@/components/ui/matrix-background";
 import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
+import { SuggestEventModal } from "@/components/suggest-event-modal";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/events")({
 function EventsPage() {
   const [dbEvents, setDbEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSuggestModalOpen, setIsSuggestModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -54,23 +56,31 @@ function EventsPage() {
       <MatrixBackground opacity={0.1} speed={1} />
 
       <div className="mx-auto max-w-6xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="mb-14"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-forest/40 bg-forest/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent backdrop-blur-md">
-            <Sparkles className="size-3.5 text-accent" />
-            Events Calendar
-          </span>
-          <h1 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-tight text-foreground text-balance md:text-6xl">
-            Show up. Get your hands dirty. <span className="text-accent matrix-glow">Leave changed.</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground font-medium">
-            A rolling calendar of workshops, panels and field days — open to any student, from any department.
-          </p>
-        </motion.div>
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-forest/40 bg-forest/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent backdrop-blur-md">
+              <Sparkles className="size-3.5 text-accent" />
+              Events Calendar
+            </span>
+            <h1 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-tight text-foreground text-balance md:text-6xl">
+              Show up. Get your hands dirty. <span className="text-accent matrix-glow">Leave changed.</span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg text-muted-foreground font-medium">
+              A rolling calendar of workshops, panels and field days — open to any student, from any department.
+            </p>
+          </motion.div>
+
+          <button
+            onClick={() => setIsSuggestModalOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-xs font-bold text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all shadow-lg cursor-pointer shrink-0"
+          >
+            <CalendarPlus className="size-4" /> Suggest An Event
+          </button>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-24">
@@ -84,17 +94,39 @@ function EventsPage() {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="mb-8 flex items-center gap-3"
+                className="mb-8 flex items-center justify-between"
               >
-                <div className="grid size-9 place-items-center rounded-full bg-forest/20 text-accent border border-forest/40">
-                  <Sparkles className="size-5" />
+                <div className="flex items-center gap-3">
+                  <div className="grid size-9 place-items-center rounded-full bg-forest/20 text-accent border border-forest/40">
+                    <Sparkles className="size-5" />
+                  </div>
+                  <h2 className="font-display text-3xl font-extrabold text-foreground">Upcoming Events</h2>
                 </div>
-                <h2 className="font-display text-3xl font-extrabold text-foreground">Upcoming Events</h2>
               </motion.div>
 
               {upcoming.length === 0 ? (
-                <div className="text-center py-12 border border-dashed border-border rounded-2xl bg-card">
-                  <p className="text-sm text-muted-foreground">No upcoming events scheduled at the moment. Check back soon!</p>
+                <div className="text-center py-16 border border-dashed border-forest/40 rounded-3xl bg-card/90 p-8 space-y-4">
+                  <div className="mx-auto grid size-14 place-items-center rounded-full bg-forest/20 text-accent border border-forest/40">
+                    <Calendar className="size-6" />
+                  </div>
+                  <h3 className="font-display text-xl font-bold text-foreground">New Drives Being Scheduled</h3>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    Our next major plantation drive and street play schedule is being finalized for this month.
+                  </p>
+                  <div className="pt-2 flex flex-wrap justify-center gap-4">
+                    <button
+                      onClick={() => setIsSuggestModalOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-2.5 text-xs font-bold text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all shadow-lg"
+                    >
+                      <CalendarPlus className="size-4" /> Suggest A Cleanup Location
+                    </button>
+                    <button
+                      onClick={() => setIsSuggestModalOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-full border border-forest/40 bg-card px-6 py-2.5 text-xs font-bold text-accent hover:bg-forest/20 transition-all"
+                    >
+                      <Bell className="size-4" /> Get Email Alerts
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -112,7 +144,7 @@ function EventsPage() {
                             <MapPin className="size-3.5 text-accent" /> {e.location}
                           </span>
                           <button className="rounded-full bg-forest px-4 py-1.5 text-xs font-bold text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all shadow-md">
-                            Register Now
+                            RSVP Now
                           </button>
                         </div>
                       }
@@ -189,6 +221,8 @@ function EventsPage() {
           </div>
         )}
       </div>
+
+      <SuggestEventModal isOpen={isSuggestModalOpen} onClose={() => setIsSuggestModalOpen(false)} />
     </div>
   );
 }

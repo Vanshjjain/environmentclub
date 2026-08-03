@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Clock } from "lucide-react";
+import { Clock, Search, Sparkles, BookOpen, User, Tag } from "lucide-react";
+import React, { useState } from "react";
 import { posts } from "@/data/mock";
+import { MatrixBackground } from "@/components/ui/matrix-background";
+import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Journal — Environment Club" },
-      { name: "description", content: "Essays and field reports from our students on climate, biodiversity, water and waste." },
+      { title: "Journal & Climate Field Notes — Environment Club" },
+      {
+        name: "description",
+        content:
+          "Articles, field notes, plastic audit data and guides written by student volunteers and eco campaign leads.",
+      },
       { property: "og:title", content: "Journal — Environment Club" },
       { property: "og:url", content: "/blog" },
     ],
@@ -17,60 +24,115 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogPage() {
-  return (
-    <div className="px-6 pb-20 pt-16 overflow-hidden">
-      <div className="mx-auto max-w-4xl relative">
-        {/* Decorative mesh */}
-        <div className="pointer-events-none absolute -top-20 -right-20 size-80 rounded-full bg-forest/5 blur-[100px] animate-mesh" />
-        <div className="pointer-events-none absolute -bottom-20 -left-20 size-60 rounded-full bg-accent/5 blur-[80px] animate-mesh-alt" />
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const categories = ["All", "Biodiversity", "Plastic Pollution", "Water Conservation", "Climate Literacy"];
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesCat = selectedCategory === "All" || post.category === selectedCategory;
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
+
+  return (
+    <div className="px-6 pb-24 pt-28 overflow-hidden bg-background">
+      <MatrixBackground opacity={0.1} speed={1} />
+
+      <div className="mx-auto max-w-6xl relative z-10 space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <span className="text-xs font-bold uppercase tracking-widest text-accent">Journal</span>
-          <h1 className="mt-4 font-display text-5xl font-bold leading-tight text-forest text-balance md:text-6xl">
-            Notes from the field.
+          <span className="inline-flex items-center gap-2 rounded-full border border-forest/40 bg-forest/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent backdrop-blur-md">
+            <BookOpen className="size-3.5 text-accent" />
+            Field Notes & Research
+          </span>
+          <h1 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-tight text-foreground text-balance md:text-6xl">
+            Journal, Data & <span className="text-accent matrix-glow">Climate Stories.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Longform pieces, short experiments, and the occasional confession. Written by the students doing the work.
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground font-medium leading-relaxed">
+            Written by student volunteers, campaign leads, and guest researchers. Field guides, campus plastic audits, and native reforestation updates.
           </p>
         </motion.div>
 
-        <div className="mt-16 divide-y divide-border border-y border-border relative z-10">
-          {posts.map((p, i) => (
-            <motion.article
-              key={p.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="group grid gap-6 py-10 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-baseline transition-all duration-300 hover:bg-forest/3 -mx-4 px-4 rounded-2xl"
-            >
-              <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground md:w-36">{p.date}</div>
-              <div className="min-w-0">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-accent">
-                  <BookOpen className="size-3" />
-                  {p.category}
-                </span>
-                <h2 className="mt-2 font-display text-2xl font-bold leading-snug text-forest group-hover:text-accent transition-colors duration-300">
-                  <a href="#" className="hover:underline">{p.title}</a>
-                </h2>
-                <p className="mt-3 text-muted-foreground">{p.excerpt}</p>
-              </div>
-              <div className="hidden items-center gap-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground md:inline-flex">
-                <Clock className="size-3" />
-                {p.readMin} min
-              </div>
-            </motion.article>
-          ))}
+        {/* Filter Controls Bar */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-card/70 p-3.5 rounded-2xl border border-border">
+          {/* Category Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`rounded-xl px-4 py-2 text-xs font-bold whitespace-nowrap transition-all ${
+                  selectedCategory === cat
+                    ? "bg-forest text-primary-foreground shadow-lg shadow-forest/30"
+                    : "bg-muted/60 text-muted-foreground hover:bg-forest/20 hover:text-accent"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Box */}
+          <div className="relative min-w-[240px]">
+            <Search className="absolute left-3.5 top-3 size-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search articles & topics..."
+              className="w-full rounded-xl bg-muted/60 border border-border pl-10 pr-4 py-2.5 text-xs font-medium text-foreground focus:border-accent focus:outline-none"
+            />
+          </div>
         </div>
 
-        <div className="mt-16 flex justify-center">
-          <button className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-forest transition-all duration-300 hover:border-forest hover:shadow-lg hover:shadow-forest/10 hover:-translate-y-1">
-            Load more essays <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </button>
+        {/* Article Grid */}
+        <div className="grid gap-8 md:grid-cols-2">
+          {filteredPosts.length === 0 ? (
+            <div className="col-span-2 text-center py-16 border border-dashed border-border rounded-3xl bg-card p-8">
+              <p className="text-sm text-muted-foreground">No articles match your current search criteria.</p>
+            </div>
+          ) : (
+            filteredPosts.map((post, i) => (
+              <Separated3DColumnCard
+                key={post.slug}
+                index={i}
+                maxRotation={8}
+                badge={post.category}
+                title={post.title}
+                subtitle={`${post.date} • ${post.readMin} min read`}
+                glowColor="rgba(34, 197, 94, 0.35)"
+                footer={
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2">
+                      {post.authorAvatar && (
+                        <img
+                          src={post.authorAvatar}
+                          alt={post.author}
+                          className="size-7 rounded-full object-cover border border-accent/40"
+                        />
+                      )}
+                      <span className="text-xs font-bold text-foreground">{post.author}</span>
+                    </div>
+
+                    <span className="text-xs font-bold text-accent hover:underline flex items-center gap-1">
+                      Read Article <Clock className="size-3.5" />
+                    </span>
+                  </div>
+                }
+              >
+                <p className="my-3 text-sm text-muted-foreground leading-relaxed font-medium">
+                  {post.excerpt}
+                </p>
+              </Separated3DColumnCard>
+            ))
+          )}
         </div>
       </div>
     </div>

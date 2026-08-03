@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Heart } from "lucide-react";
+import React, { useState } from "react";
 import { campaigns, initiatives } from "@/data/mock";
 import { MatrixBackground } from "@/components/ui/matrix-background";
 import { Separated3DColumnCard } from "@/components/ui/separated-3d-column-card";
+import { CampaignSupportModal } from "@/components/campaign-support-modal";
+import { ResourceHub } from "@/components/resource-hub";
 
 export const Route = createFileRoute("/campaigns")({
   head: () => ({
@@ -23,6 +26,14 @@ export const Route = createFileRoute("/campaigns")({
 });
 
 function CampaignsPage() {
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  const [selectedCampaignTitle, setSelectedCampaignTitle] = useState("");
+
+  const handleOpenSupport = (title: string) => {
+    setSelectedCampaignTitle(title);
+    setIsSupportModalOpen(true);
+  };
+
   return (
     <div className="overflow-hidden bg-background">
       {/* PAGE HEADER WITH MATRIX BACKDROP */}
@@ -105,14 +116,12 @@ function CampaignsPage() {
                   <p className="mt-4 text-muted-foreground leading-relaxed text-base">
                     {item.description}
                   </p>
-                  <a
-                    href="https://www.instagram.com/environment_club_?igsh=bzdqcG03NDVoaGEw"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-accent border-b-2 border-accent pb-1 transition-all hover:text-leaf group/link"
+                  <button
+                    onClick={() => handleOpenSupport(item.headline)}
+                    className="mt-8 inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all shadow-lg cursor-pointer"
                   >
-                    See it on Instagram <ArrowRight className="size-4 transition-transform group-hover/link:translate-x-1" />
-                  </a>
+                    <Heart className="size-4 fill-current" /> Support This Pillar
+                  </button>
                 </div>
               </Separated3DColumnCard>
             </motion.div>
@@ -146,7 +155,12 @@ function CampaignsPage() {
                 footer={
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-muted-foreground">{c.goal}</span>
-                    <span className="text-xs font-bold text-accent">{c.progress}% Done</span>
+                    <button
+                      onClick={() => handleOpenSupport(c.title)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:underline cursor-pointer"
+                    >
+                      Support Project <ArrowRight className="size-3.5" />
+                    </button>
                   </div>
                 }
               >
@@ -186,6 +200,19 @@ function CampaignsPage() {
           </div>
         </div>
       </section>
+
+      {/* DOWNLOADABLE RESOURCE HUB */}
+      <section className="px-6 py-24 relative bg-card/30 border-t border-border">
+        <div className="mx-auto max-w-6xl relative z-10">
+          <ResourceHub />
+        </div>
+      </section>
+
+      <CampaignSupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        campaignTitle={selectedCampaignTitle}
+      />
     </div>
   );
 }
