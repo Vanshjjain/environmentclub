@@ -117,7 +117,6 @@ export const leadership = [
     name: "Sawan Kanojia",
     role: "Founder & Chief Mentor",
     bio: "Visionary founder committed to youth climate stewardship. Championed the initial 50-sapling drive in 2018 into a 12,000+ tree movement.",
-    avatar: "/founder.jpg.jpeg",
     socials: {
       linkedin: "https://linkedin.com/in/sawankanojia",
       twitter: "https://twitter.com/sawankanojia",
@@ -127,9 +126,8 @@ export const leadership = [
   },
   {
     name: "Vansh Jain",
-    role: "Club President",
-    bio: "Leads campus operations, government partnerships, and strategic expansion across 12 college chapters in Uttar Pradesh.",
-    avatar: "/logo.png.jpeg",
+    role: "Volunteer",
+    bio: "Active volunteer supporting campus operations, tree plantation drives, and student engagement across college chapters in Uttar Pradesh.",
     socials: {
       linkedin: "https://linkedin.com/in/vanshjjain",
       twitter: "https://twitter.com/vanshjjain",
@@ -139,9 +137,8 @@ export const leadership = [
   },
   {
     name: "Mayank Tamta",
-    role: "Campaign Director",
-    bio: "Head of field operations, urban plastic audits, and native reforestation site logistics across Meerut.",
-    avatar: "/founder.jpg.jpeg",
+    role: "Coordinator",
+    bio: "Coordinator for field operations, urban plastic audits, and native reforestation site logistics across Meerut.",
     socials: {
       linkedin: "https://linkedin.com/in/mayanktamta",
       instagram: "https://instagram.com/environment_club_",
@@ -150,9 +147,8 @@ export const leadership = [
   },
   {
     name: "Abhishek Paliwal",
-    role: "Youth Outreach Lead",
-    bio: "Directs school climate literacy workshops, Nukkad Natak troupe direction, and volunteer mobilization.",
-    avatar: "/logo.png.jpeg",
+    role: "Coordinator",
+    bio: "Coordinator for school climate literacy workshops, Nukkad Natak troupe direction, and volunteer mobilization.",
     socials: {
       linkedin: "https://linkedin.com/in/abhishekpaliwal",
       instagram: "https://instagram.com/environment_club_",
@@ -250,17 +246,17 @@ export const testimonials = [
   {
     quote: "Joining the Environment Club was the most meaningful thing I did in college. It changed how I see everyday action.",
     name: "Abhishek Paliwal",
-    role: "Youth Outreach Lead",
+    role: "Coordinator",
   },
   {
     quote: "The clean-ups turned into friendships, the friendships turned into a movement. That's the real power of youth.",
     name: "Mayank Tamta",
-    role: "Campaign Director",
+    role: "Coordinator",
   },
   {
     quote: "A student body doing serious ecological work with verifiable data. We are proud to lead this campus revolution.",
     name: "Vansh Jain",
-    role: "Club President",
+    role: "Volunteer",
   },
 ];
 

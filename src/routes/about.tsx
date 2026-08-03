@@ -186,14 +186,7 @@ function AboutPage() {
                 </div>
               }
             >
-              <div className="my-3 space-y-3">
-                <div className="relative aspect-square overflow-hidden rounded-2xl border border-forest/30">
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="size-full object-cover"
-                  />
-                </div>
+              <div className="my-3">
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   {member.bio}
                 </p>
